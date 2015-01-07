@@ -38,7 +38,7 @@ namespace EntityModel
         public string UnderlyingSymbol { get; set; }
 
         [AttributeName("multiplier")]
-        public int Multiplier { get; set; }
+        public decimal Multiplier { get; set; } //int
 
         [AttributeName("expiry", "yyyy-MM-dd")]
         public DateTime? Expiration { get; set; }

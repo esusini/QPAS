@@ -106,10 +106,10 @@ namespace EntityModel.Migrations
                         UnrealizedResultDollarsShort = c.Decimal(nullable: false, precision: 20, scale: 10),
                         UnrealizedResultPctLong = c.Double(nullable: false),
                         UnrealizedResultPctShort = c.Double(nullable: false),
-                        CapitalLong = c.Decimal(nullable: false, precision: 20, scale: 10),
-                        CapitalShort = c.Decimal(nullable: false, precision: 20, scale: 10),
-                        CapitalTotal = c.Decimal(nullable: false, precision: 20, scale: 10),
-                        CapitalNet = c.Decimal(nullable: false, precision: 20, scale: 10),
+                        CapitalLong = c.Decimal(nullable: false, precision: 20, scale: 6),
+                        CapitalShort = c.Decimal(nullable: false, precision: 20, scale: 6),
+                        CapitalTotal = c.Decimal(nullable: false, precision: 20, scale: 6),
+                        CapitalNet = c.Decimal(nullable: false, precision: 20, scale: 6),
                         Notes = c.String(),
                     })
                 .PrimaryKey(t => t.ID)
@@ -157,20 +157,20 @@ namespace EntityModel.Migrations
                         CommissionCurrencyID = c.Int(nullable: false),
                         AssetCategory = c.Int(nullable: false),
                         FXRateToBase = c.Decimal(nullable: false, precision: 20, scale: 10),
-                        Multiplier = c.Int(nullable: false),
-                        TradeMoney = c.Decimal(nullable: false, precision: 20, scale: 10),
-                        Proceeds = c.Decimal(nullable: false, precision: 20, scale: 10),
+                        Multiplier = c.Decimal(nullable: false),
+                        TradeMoney = c.Decimal(nullable: false, precision: 20, scale: 6),
+                        Proceeds = c.Decimal(nullable: false, precision: 20, scale: 6),
                         Taxes = c.Decimal(nullable: false, precision: 20, scale: 10),
                         ClosePrice = c.Decimal(nullable: false, precision: 20, scale: 10),
                         OpenClose = c.String(maxLength: 10),
                         Notes = c.String(maxLength: 50),
-                        CostBasis = c.Decimal(nullable: false, precision: 20, scale: 10),
-                        FIFORealizedPnL = c.Decimal(nullable: false, precision: 20, scale: 10),
-                        MTMPnL = c.Decimal(nullable: false, precision: 20, scale: 10),
+                        CostBasis = c.Decimal(nullable: false, precision: 20, scale: 6),
+                        FIFORealizedPnL = c.Decimal(nullable: false, precision: 20, scale: 6),
+                        MTMPnL = c.Decimal(nullable: false, precision: 20, scale: 6),
                         OptionType = c.String(maxLength: 10),
                         BuySell = c.String(maxLength: 10),
                         IBOrderID = c.Long(),
-                        NetCash = c.Decimal(nullable: false, precision: 20, scale: 10),
+                        NetCash = c.Decimal(nullable: false, precision: 20, scale: 6),
                         OrderType = c.String(maxLength: 20),
                         IsReal = c.Boolean(nullable: false),
                         ReferencePrice = c.Decimal(precision: 20, scale: 10),
@@ -186,7 +186,7 @@ namespace EntityModel.Migrations
                 .Index(t => t.TradeDate)
                 .Index(t => t.CurrencyID)
                 .Index(t => t.CommissionCurrencyID)
-                .Index(t => t.IBOrderID, unique: true);
+                .Index(t => t.IBOrderID, unique: false); //true
             
             CreateTable(
                 "dbo.Executions",

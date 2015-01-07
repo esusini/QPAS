@@ -126,7 +126,7 @@ namespace EntityModel
         public decimal FXRateToBase { get; set; }
 
         [AttributeName("multiplier")]
-        public int Multiplier { get; set; }
+        public decimal Multiplier { get; set; } //int
 
         /// <summary>
         /// Trade money is calculated by multiplying the trade price and quantity.

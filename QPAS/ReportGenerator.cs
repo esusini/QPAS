@@ -235,7 +235,7 @@ namespace QPAS
             //plus any positions opened today before an arbitrary cut-off point (for now I'll use 15:40:00 ET)
             //anything before that is considered to be an intraday position and should have this day's returns included in the calculations
             //anything after that is a position considered to be initiated "at the close" and thus not included in today's returns calculations
-            TimeSpan cutoffTime = new TimeSpan(15, 40, 0);
+            TimeSpan cutoffTime = new TimeSpan(18, 30, 0);
 
             //capture data to be stored here
             var instrumentUpGross = new Dictionary<string, double>();
@@ -786,8 +786,8 @@ namespace QPAS
         private void DoPortfolioStats()
         {
             int daysInPeriod = (int)(_datesInPeriod.Last() - _datesInPeriod.First()).TotalDays;
-            Dictionary<string, string> roacStats = PerformanceMeasurement.EquityCurveStats(_totalPortfolioTracker.RoacEquityCurve, daysInPeriod);
-            Dictionary<string, string> rotcStats = PerformanceMeasurement.EquityCurveStats(_totalPortfolioTracker.RotcEquityCurve, daysInPeriod);
+            Dictionary<string, string> roacStats = PerformanceMeasurement.EquityCurveStats(_totalPortfolioTracker.RoacEquityCurve, daysInPeriod, _trades);
+            Dictionary<string, string> rotcStats = PerformanceMeasurement.EquityCurveStats(_totalPortfolioTracker.RotcEquityCurve, daysInPeriod, _trades);
 
             Dictionary<string, string> benchmarkStats = null;
             if (_benchmarkEC != null)

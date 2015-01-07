@@ -50,7 +50,7 @@ namespace EntityModel
         public int Quantity { get; set; }
 
         [AttributeName("multiplier")]
-        public int Multiplier { get; set; }
+        public decimal Multiplier { get; set; } //int
 
         [AttributeName("markPrice")]
         public decimal MarkPrice { get; set; }

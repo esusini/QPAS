@@ -180,7 +180,7 @@ namespace QPAS
         {
             decimal capitalUsage = 0;
             //If the order is toward the end of the day, we don't want to count it for the day's capital usage
-            var timeLimit = new TimeSpan(15, 40, 00);
+            var timeLimit = new TimeSpan(18, 30, 00);
             if (order.TradeDate.TimeOfDay < timeLimit)
             {
                 capitalUsage = GetCapitalUsage(order);
@@ -443,7 +443,7 @@ namespace QPAS
                 _openPositions.Add(new Tuple<decimal, int>(order.Price * order.FXRateToBase, quantity * Math.Sign(order.Quantity)));
             }
 
-            order.PerTradeFIFOPnL = totalPnL;
+            order.PerTradeFIFOPnL = decimal.Multiply(totalPnL, Instrument.Multiplier);
         }
 
         /// <summary>

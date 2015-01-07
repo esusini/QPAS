@@ -139,6 +139,10 @@ namespace QPAS
 
         public static Dictionary<string, string> EquityCurveStats(EquityCurve ec, int calendarDaysInPeriod)
         {
+        	return PerformanceMeasurement.EquityCurveStats(ec, calendarDaysInPeriod, new List<Trade>());
+        }
+        public static Dictionary<string, string> EquityCurveStats(EquityCurve ec, int calendarDaysInPeriod,List<Trade> trades)
+        {
             if (ec.Returns.Count <= 1) return new Dictionary<string, string>();
 
             var stats = new Dictionary<string, string>();
@@ -207,9 +211,60 @@ namespace QPAS
             double ulcerIndex = Math.Sqrt(ec.DrawdownPct.Sum(x => x * x) / ec.DrawdownPct.Count);
             stats.Add("Ulcer Index", (ulcerIndex * 100).ToString("0.00"));
             stats.Add("UPI/Martin Ratio", ((cagr - Properties.Settings.Default.assumedInterestRate) / ulcerIndex).ToString("0.00"));
+            double ERTSDD,RGeom,dERTSDD,dRGeom;
+            GetERTSDD(ec, calendarDaysInPeriod,trades, out ERTSDD, out RGeom, out dERTSDD, out dRGeom);
+            stats.Add("ERTSDD (trades)", ERTSDD.ToString("p2"));
+			stats.Add("RGeom (trades)", RGeom.ToString("0.00"));
+            stats.Add("ERTSDD (daily)", dERTSDD.ToString("p2"));
+			stats.Add("RGeom (daily)", dRGeom.ToString("0.00"));
 
             return stats;
         }
+
+
+        public static void GetERTSDD(EquityCurve ec, List<double> drawdownCurve, int daysInPeriod,List<Trade> trades, out double ERTSDD, out double RGeom, out double dERTSDD, out double dRGeom)
+        {
+        	ERTSDD = double.NaN;
+        	RGeom = double.NaN;
+        	dERTSDD = double.NaN;
+        	dRGeom = double.NaN;
+        	double maxdd = drawdownCurve.Min();
+       		double TWRD = 1 + maxdd;
+			double TWRD20 = 1 - 0.2;
+			double TWRT = ((ec.Equity.Last() / ec.Equity.First()));
+        	DateTime? startdate = ec.Dates[drawdownCurve.LastIndexOf(0,drawdownCurve.IndexOf(drawdownCurve.Min()))];
+        	DateTime? enddate = ec.Dates[drawdownCurve.IndexOf(drawdownCurve.Min())];
+        	int numtrades = trades.Count(x => x.DateOpened.Date >= startdate.Value.Date && x.DateOpened.Date <= enddate.Value.Date);
+        	if (numtrades > 0)
+        	{
+				double GMeanD = Math.Pow(TWRD, (1.0/numtrades));
+				double GMeanD20 = Math.Pow(TWRD20, (1.0/numtrades));
+				RGeom = (GMeanD20 - 1) / (GMeanD - 1);
+				int tottrades = trades.Count(x => !x.Open);
+				double GMeanT = Math.Pow(TWRT, (1.0/tottrades));
+				double NewRet = (Math.Pow((GMeanT - 1) * RGeom + 1, (double)tottrades) - 1);
+	        	double NewRetAnn = (Math.Pow(NewRet + 1, 1.0 / (daysInPeriod / 365.0)) - 1);
+	        	ERTSDD = NewRetAnn;
+        	}
+       		int numdays = drawdownCurve.IndexOf(drawdownCurve.Min()) - drawdownCurve.LastIndexOf(0,drawdownCurve.IndexOf(drawdownCurve.Min())) + 1;
+        	if (numdays > 0)
+        	{
+				double dGMeanD = Math.Pow(TWRD, (1.0/numdays));
+				double dGMeanD20 = Math.Pow(TWRD20, (1.0/numdays));
+				dRGeom = (dGMeanD20 - 1) / (dGMeanD - 1);
+        		int totdays = ec.Equity.Count;
+				double dGMeanT = Math.Pow(TWRT, (1.0/totdays));
+				double dNewRet = (Math.Pow((dGMeanT - 1) * RGeom + 1, (double)totdays) - 1);
+	        	double dNewRetAnn = (Math.Pow(dNewRet + 1, 1.0 / (daysInPeriod / 365.0)) - 1);
+	        	dERTSDD = dNewRetAnn;
+        	}
+        }
+ 
+        public static void GetERTSDD(EquityCurve ec, int daysInPeriod, List<Trade> trades, out double ERTSDD, out double RGeom, out double dERTSDD, out double dRGeom)
+        {
+         	GetERTSDD(ec, ec.DrawdownPct, daysInPeriod, trades, out ERTSDD, out RGeom, out dERTSDD, out dRGeom); 
+        }
+ 
 
         /// <summary>
         /// Calculate performance ratios for a given equity curve.

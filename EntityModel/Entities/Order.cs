@@ -181,7 +181,7 @@ namespace EntityModel
         /// The multiplier of the contract traded.
         /// </summary>
         [AttributeName("multiplier")]
-        public int Multiplier { get; set; }
+        public decimal Multiplier { get; set; } //int
 
         /// <summary>
         /// Trade money is calculated by multiplying the trade price and quantity.
